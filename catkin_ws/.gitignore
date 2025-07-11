@@ -1,0 +1,21 @@
+# 忽略 build、devel 和 install 编译产物
+build/
+devel/
+install/
+
+# 忽略 CMake 生成的缓存和中间文件
+CMakeFiles/
+CMakeCache.txt
+*.cmake
+*.pyc
+*.log
+
+# 忽略 ROS 自动生成的头文件等
+*.so
+*.swp
+*.swo
+*.swp
+*.o
+
+# 忽略 vscode 的工作文件
+.vscode/
