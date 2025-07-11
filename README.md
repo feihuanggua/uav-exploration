@@ -1,89 +1,89 @@
-# 多无人机自主探索系统说明
+# Multi-UAV Autonomous Exploration System Guide
 
-## 1. 项目简介
+## 1. Project Overview
 
-本工程基于 ROS，集成了 PX4 多机仿真、位姿真值获取、坐标转换、多机通讯、三维可视化（RVIZ）、多机探索与控制等模块，支持多无人机协同自主探索任务。
-
----
-
-## 2. 主要功能模块
-
-- **PX4 多机仿真**：通过 PX4 固件和 Gazebo 实现多架无人机的物理仿真。
-- **位姿真值获取**：实时获取所有无人机的真实位姿，用于后续坐标转换与点云处理。
-- **坐标转换**：将仿真环境下的无人机位姿转换为统一坐标系，便于多机协同。
-- **多机通讯**：实现无人机间的状态、任务等信息同步。
-- **三维可视化（RVIZ）**：实时展示探索过程、地图、轨迹等信息。
-- **多机探索与控制**：支持多架无人机自主探索、避障、路径规划与控制。
+This project is based on ROS and integrates PX4 multi-UAV simulation, ground-truth pose acquisition, coordinate transformation, multi-UAV communication, 3D visualization (RVIZ), and multi-UAV exploration and control modules. It supports collaborative autonomous exploration tasks for multiple UAVs.
 
 ---
 
-## 3. 一键启动脚本说明
+## 2. Main Functional Modules
 
-你可以使用如下 bash 脚本一键启动全部仿真与探索流程：
+- **PX4 Multi-UAV Simulation**: Simulate multiple UAVs using PX4 firmware and Gazebo.
+- **Ground-Truth Pose Acquisition**: Obtain real-time ground-truth poses of all UAVs for subsequent coordinate transformation and point cloud processing.
+- **Coordinate Transformation**: Convert UAV poses in the simulation environment to a unified coordinate system for collaboration.
+- **Multi-UAV Communication**: Synchronize status and task information among UAVs.
+- **3D Visualization (RVIZ)**: Real-time display of exploration process, maps, trajectories, etc.
+- **Multi-UAV Exploration & Control**: Support for autonomous exploration, obstacle avoidance, path planning, and control of multiple UAVs.
+
+---
+
+## 3. One-Click Launch Script
+
+You can use the following bash script to launch the entire simulation and exploration workflow with one click:
 
 ```bash
 #!/bin/bash
-# 详细脚本内容见本仓库/scripts/haha.sh
+# See the full script in scripts/haha.sh
 ```
 
-### 启动流程说明
+### Launch Workflow
 
-1. **PX4 多机仿真**  
-   启动 PX4 固件和 Gazebo，仿真多架无人机。
-2. **多机位姿真值获取**  
-   启动脚本获取所有无人机的真实位姿。
-3. **坐标转换**  
-   启动坐标转换节点，统一多机坐标系。
-4. **多机通讯**  
-   启动多机间的通信节点。
-5. **RVIZ 可视化**  
-   启动 RVIZ，实时可视化探索过程。
-6. **swarm_exploration 启动**  
-   启动多机探索主节点。
-7. **PX4 控制器**  
-   启动多机控制器节点。
+1. **PX4 Multi-UAV Simulation**  
+   Launch PX4 firmware and Gazebo to simulate multiple UAVs.
+2. **Ground-Truth Pose Acquisition**  
+   Run the script to obtain real-time ground-truth poses of all UAVs.
+3. **Coordinate Transformation**  
+   Start the coordinate transformation node to unify the coordinate system.
+4. **Multi-UAV Communication**  
+   Start the communication node for inter-UAV messaging.
+5. **RVIZ Visualization**  
+   Launch RVIZ for real-time visualization.
+6. **Swarm Exploration Node**  
+   Start the main multi-UAV exploration node.
+7. **PX4 Controller**  
+   Start the multi-UAV controller node.
 
-### 脚本命令详解
+### Command Details
 
-- 进入PX4_Firmware目录，启动PX4多机仿真环境
+- Enter the PX4_Firmware directory and launch PX4 multi-UAV simulation
 ```bash
 cd ~/PX4_Firmware
 roslaunch px4 multi_vehicle.launch
 ```
 
-- 进入XTDrone的pose_ground_truth目录，获取多机位姿真值
+- Enter the XTDrone pose_ground_truth directory and acquire multi-UAV ground-truth poses
 ```bash
 cd ~/XTDrone/sensing/pose_ground_truth/
 bash get_multi_vehcle_local_pose_beta.sh
 ```
 
-- 进入XTDrone的motion_planning/3d目录，进行多机坐标转换
+- Enter the XTDrone motion_planning/3d directory and perform multi-UAV coordinate transformation
 ```bash
 cd ~/XTDrone/motion_planning/3d
 python3 ego_swarm_transfer.py iris 2
 ```
 
-- 进入XTDrone的communication目录，启动多机通信
+- Enter the XTDrone communication directory and start multi-UAV communication
 ```bash
 cd ~/XTDrone/communication
 bash multi_vehicle_communication_beta.sh
 ```
 
-- 进入racer/catkin_ws目录，加载ROS环境，启动RVIZ可视化
+- Enter the racer/catkin_ws directory, source ROS environment, and launch RVIZ visualization
 ```bash
 cd ~/racer/catkin_ws/
 source devel/setup.bash
 roslaunch exploration_manager rviz.launch
 ```
 
-- 进入racer/catkin_ws目录，加载ROS环境，启动多机探索主节点
+- Enter the racer/catkin_ws directory, source ROS environment, and launch the main multi-UAV exploration node
 ```bash
 cd ~/racer/catkin_ws/
 source devel/setup.bash
 roslaunch exploration_manager swarm_exploration.launch
 ```
 
-- 进入racer/catkin_ws目录，加载ROS环境，启动PX4多机控制器
+- Enter the racer/catkin_ws directory, source ROS environment, and launch the PX4 multi-UAV controller
 ```bash
 cd ~/racer/catkin_ws/
 source devel/setup.bash
@@ -92,22 +92,22 @@ roslaunch px4ctrl multi_ctrl.launch
 
 ---
 
-### 使用方法
+### Usage
 
-1. 确保所有依赖环境已配置好（XTDrone、ROS、相关Python依赖等）。
-2. 赋予脚本执行权限：
+1. Make sure all dependencies are installed (XTDrone, ROS, required Python packages, etc.).
+2. Grant execute permission to the script:
    ```bash
    chmod +x scripts/haha.sh
    ```
-3. 运行脚本：
+3. Run the script:
    ```bash
    ./scripts/haha.sh
    ```
-4. 按 `Ctrl+C` 可一键关闭所有相关进程。
+4. Press `Ctrl+C` to terminate all related processes at once.
 
 ---
 
-## 4. 参考目录结构
+## 4. Reference Directory Structure
 
 ```
 catkin_ws/
@@ -127,10 +127,10 @@ catkin_ws/
 
 ---
 
-## 5. 联系与支持
+## 5. Contact & Support
 
-如有问题请联系项目维护者，或在 Issues 区留言。
+If you have any questions, please contact the project maintainer or leave an issue.
 
 ---
 
-**祝你多机仿真与探索顺利！** 
+**Wish you a smooth multi-UAV simulation and exploration!** 
