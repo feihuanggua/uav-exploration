@@ -29,26 +29,25 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_message_files(
   FILES
-  # SentGoals.msg
-  # DeletedGoals.msg
   DroneState.msg
+  GridIds.msg
+  GridTour.msg
+  HGrid.msg
   PairOpt.msg
   PairOptResponse.msg
-  HGrid.msg
-  GridTour.msg
+  SentGoals.msg
+  DeletedGoals.msg
+  swarm_drone_basecoor.msg
 )
 
 generate_messages(
   DEPENDENCIES
-  # std_msgs
+  std_msgs
   geometry_msgs
 )
 
 catkin_package(
- INCLUDE_DIRS include
- LIBRARIES exploration_manager
- CATKIN_DEPENDS plan_env path_searching bspline bspline_opt active_perception traj_utils lkh_tsp_solver lkh_mtsp_solver plan_manage message_runtime
-#  DEPENDS system_lib
+  CATKIN_DEPENDS message_runtime std_msgs geometry_msgs
 )
 
 include_directories(

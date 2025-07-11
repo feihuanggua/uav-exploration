@@ -7,6 +7,11 @@
 #include <visualization_msgs/Marker.h>
 
 #include <fstream>
+// ===== Point Cloud Filtering Feature (可选功能) =====
+// 如需启用点云过滤，去掉以下相关代码的注释即可。
+// 该功能会自动过滤掉靠近其他无人机的点云点，防止误识别为障碍物。
+// -----------------------------------------------
+ #include <exploration_manager/swarm_drone_basecoor.h>
 
 namespace fast_planner {
 MapROS::MapROS() {
@@ -69,7 +74,8 @@ void MapROS::init() {
   update_range_pub_ = node_.advertise<visualization_msgs::Marker>("/sdf_map/update_range", 10);
   depth_pub_ = node_.advertise<sensor_msgs::PointCloud2>("/sdf_map/depth_cloud", 10);
 
-  // basecoor_sub_ = node_.subscribe("/sdf_map/basecoor", 10, &MapROS::basecoorCallback, this);
+//uav点云过滤
+  basecoor_sub_ = node_.subscribe("/sdf_map/basecoor", 10, &MapROS::basecoorCallback, this);
 
   depth_sub_.reset(
       new message_filters::Subscriber<sensor_msgs::Image>(node_, "/map_ros/depth", 50));
@@ -194,59 +200,15 @@ void MapROS::cloudPoseCallback(
   }
 }
 
-// void MapROS::basecoorCallback(const swarm_msgs::swarm_drone_basecoorConstPtr& msg) {
-
-//   if (msg->self_id != map_->mm_->drone_id_ && msg->self_id != map_->mm_->vis_drone_id_) return;
-
-//   for (int i = 0; i < msg->ids.size(); ++i) {
-//     auto id = msg->ids[i];
-//     auto pos = msg->drone_basecoor[i];
-//     auto yaw = msg->drone_baseyaw[i];
-//     map_->md_->swarm_transform_[id] = Eigen::Vector4d(pos.x, pos.y, pos.z, yaw);
-//   }
-
-//   // Update global bounding box
-//   if (map_->md_->swarm_transform_.find(1) == map_->md_->swarm_transform_.end()) return;
-
-//   auto transform = map_->md_->swarm_transform_[1];
-//   double yaw = transform[3];
-//   map_->mp_->rot_sw_ << cos(yaw), -sin(yaw), 0, sin(yaw), cos(yaw), 0, 0, 0, 1;
-//   map_->mp_->trans_sw_ = transform.head<3>();
-
-//   // Compute vertices, box and normals of map in current drone's frame
-//   Eigen::Vector3d left_bottom, right_top, left_top, right_bottom;
-//   left_bottom = map_->mp_->box_mind_;
-//   right_top = map_->mp_->box_maxd_;
-
-//   left_top[0] = left_bottom[0];
-//   left_top[1] = right_top[1];
-//   left_top[2] = left_bottom[2];
-//   right_bottom[0] = right_top[0];
-//   right_bottom[1] = left_bottom[1];
-//   right_bottom[2] = left_bottom[2];
-//   right_top[2] = left_bottom[2];
-
-//   map_->mp_->vertices_ = { left_bottom, right_bottom, right_top, left_top };
-//   if (map_->mp_->use_swarm_tf_) {
-//     for (auto& vert : map_->mp_->vertices_) vert = map_->mp_->rot_sw_ * vert +
-//     map_->mp_->trans_sw_;
-//   }
-
-//   map_->mp_->vmin_ = map_->mp_->vmax_ = map_->mp_->vertices_[0];
-//   for (int j = 1; j < map_->mp_->vertices_.size(); ++j) {
-//     for (int k = 0; k < 2; ++k) {
-//       map_->mp_->vmin_[k] = min(map_->mp_->vmin_[k], map_->mp_->vertices_[j][k]);
-//       map_->mp_->vmax_[k] = max(map_->mp_->vmax_[k], map_->mp_->vertices_[j][k]);
-//     }
-//   }
-
-//   map_->mp_->normals_.clear();
-//   for (int j = 0; j < 4; ++j) {
-//     Eigen::Vector3d dir =
-//         (map_->mp_->vertices_[(j + 1) % 4] - map_->mp_->vertices_[j]).normalized();
-//     map_->mp_->normals_.push_back(dir);
-//   }
-// }
+//uav点云过滤
+void MapROS::basecoorCallback(const exploration_manager::swarm_drone_basecoorConstPtr& msg) {
+  other_drone_positions_.clear();
+  for (size_t i = 0; i < msg->ids.size(); ++i) {
+    if (msg->ids[i] == msg->self_id) continue;
+    const auto& pt = msg->drone_basecoor[i];
+    other_drone_positions_.emplace_back(pt.x, pt.y, pt.z);
+  }
+}
 
 void MapROS::processDepthImage() {
   proj_points_cnt = 0;
@@ -281,6 +243,21 @@ void MapROS::processDepthImage() {
       pt_cur(1) = (v - cy_) * depth / fy_;
       pt_cur(2) = depth;
       pt_world = camera_r * pt_cur + camera_pos_;
+
+//uav点云过滤
+      // ===== 点云过滤功能（可选） =====
+      // 如需启用，去掉下方注释
+      
+      bool near_other_drone = false;
+      for (const auto& drone_pos : other_drone_positions_) {
+        if ((pt_world - drone_pos).norm() < drone_filter_radius_) {
+          near_other_drone = true;
+          break;
+        }
+      }
+      if (near_other_drone) continue;
+      
+      // =============================
       auto& pt = point_cloud_.points[proj_points_cnt++];
       pt.x = pt_world[0];
       pt.y = pt_world[1];

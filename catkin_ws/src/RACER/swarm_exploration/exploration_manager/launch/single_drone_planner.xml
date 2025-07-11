@@ -63,7 +63,7 @@
     <remap from="/sdf_map/basecoor" to="/swarm_drones/swarm_drone_basecoor" unless="$(arg simulation)"/>
     
 <!-- resolution是建图精度，初始0.1 -->
-    <param name="sdf_map/resolution"      value="0.1" /> 
+    <param name="sdf_map/resolution"      value="0.05" /> 
     <param name="sdf_map/map_size_x"   value="$(arg map_size_x)" /> 
     <param name="sdf_map/map_size_y"   value="$(arg map_size_y)" /> 
     <param name="sdf_map/map_size_z"   value="$(arg map_size_z)" /> 

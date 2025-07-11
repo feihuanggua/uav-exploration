@@ -12,7 +12,7 @@
 #include <cv_bridge/cv_bridge.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/Odometry.h>
-// #include <swarm_msgs/swarm_drone_basecoor.h>
+#include <exploration_manager/swarm_drone_basecoor.h>
 
 #include <memory>
 #include <random>
@@ -102,6 +102,13 @@ private:
   default_random_engine eng_;
 
   ros::Time map_start_time_;
+
+  // Point cloud filtering: store other UAV positions
+  std::vector<Eigen::Vector3d> other_drone_positions_;
+  double drone_filter_radius_ = 0.5; // default filter radius (meters)
+
+  // Point cloud filtering: callback for UAV positions
+  void basecoorCallback(const exploration_manager::swarm_drone_basecoorConstPtr& msg);
 
   friend SDFMap;
 };
