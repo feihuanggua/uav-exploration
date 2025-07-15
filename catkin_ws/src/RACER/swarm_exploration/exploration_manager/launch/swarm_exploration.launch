@@ -1,7 +1,7 @@
 <launch>
   <!-- size of map, change the size in x, y, z according to your application -->
   <!-- 以下三个参数，似乎只决定飞机探索的边界，也就是飞机自身初始化的那块地方，改大了在案例里面不会往更大的地方去，可能是因为案例的地图是有边界的，改小会导致只探索地图一小段区域 -->
-  <arg name="map_size_x" value="35.0"/>
+  <arg name="map_size_x" value="18.0"/>
   <arg name="map_size_y" value="35.0"/>
   <arg name="map_size_z" value=" 3.5"/>
 

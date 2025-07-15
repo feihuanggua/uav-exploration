@@ -53,6 +53,8 @@ log_info "Opening Terminal 6: Swarm Exploration..."
 gnome-terminal --title="Swarm Exploration" -- bash -c "cd ~/racer/catkin_ws/ && source devel/setup.bash && roslaunch exploration_manager swarm_exploration.launch; exec bash" &
 TERMINAL_PIDS+=($!)
 
+
+sleep 2
 # 7. 启动控制器（多机）
 log_info "Opening Terminal 7: PX4 Controller (Multi)..."
 #gnome-terminal --title="PX4 Controller Multi" -- bash -c "cd ~/fuel_gazebo/catkin_ws/Fast-Exploration/ && source devel/setup.bash && roslaunch px4ctrl multi_ctrl.launch; exec bash" &

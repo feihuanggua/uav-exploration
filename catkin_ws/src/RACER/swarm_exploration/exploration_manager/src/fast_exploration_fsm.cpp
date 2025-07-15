@@ -332,14 +332,14 @@ void FastExplorationFSM::visualize(int content) {
       // getColorVal(i, expl_manager_->ep_->drone_num_, expl_manager_->ep_->drone_id_)
       // double(i) / ed_ptr->frontiers_.size()
 
-      // visualization_->drawBox(ed_ptr->frontier_boxes_[i].first,
-      // ed_ptr->frontier_boxes_[i].second,
-      //     Vector4d(0.5, 0, 1, 0.3), "frontier_boxes", i, 4);
+      visualization_->drawBox(ed_ptr->frontier_boxes_[i].first,
+      ed_ptr->frontier_boxes_[i].second,
+          Vector4d(0.5, 0, 1, 0.3), "frontier_boxes", i, 4);
     }
     for (int i = ed_ptr->frontiers_.size(); i < last_ftr_num; ++i) {
       visualization_->drawCubes({}, 0.1, Vector4d(0, 0, 0, 1), "frontier", i, 4);
-      // visualization_->drawBox(Vector3d(0, 0, 0), Vector3d(0, 0, 0), Vector4d(1, 0, 0, 0.3),
-      // "frontier_boxes", i, 4);
+      visualization_->drawBox(Vector3d(0, 0, 0), Vector3d(0, 0, 0), Vector4d(1, 0, 0, 0.3),
+      "frontier_boxes", i, 4);
     }
     last_ftr_num = ed_ptr->frontiers_.size();
 
@@ -435,7 +435,9 @@ void FastExplorationFSM::visualize(int content) {
 
     // Top viewpoints and frontier tour-------------------------------------
 
-    // visualization_->drawSpheres(ed_ptr->points_, 0.2, Vector4d(0, 0.5, 0, 1), "points", 0, 6);
+    // 各个前沿的最佳视点，还未局部路径优化
+    visualization_->drawSpheres(ed_ptr->points_, 0.2, Vector4d(0, 0.5, 0, 1), "points", 0, 6);
+    //前沿视点的视线
     // visualization_->drawLines(
     //     ed_ptr->points_, ed_ptr->views_, 0.05, Vector4d(0, 1, 0.5, 1), "view", 0, 6);
     // visualization_->drawLines(
@@ -455,11 +457,12 @@ void FastExplorationFSM::visualize(int content) {
 
     // Locally refined viewpoints and refined tour-------------------------------
 
-    // visualization_->drawSpheres(
-    //     ed_ptr->refined_points_, 0.2, Vector4d(0, 0, 1, 1), "refined_pts", 0, 6);
-    // visualization_->drawLines(
-    //     ed_ptr->refined_points_, ed_ptr->refined_views_, 0.05, Vector4d(0.5, 0, 1, 1),
-    //     "refined_view", 0, 6);
+    //局部路径规划后的视点序列
+    visualization_->drawSpheres(
+        ed_ptr->refined_points_, 0.2, Vector4d(0, 0, 1, 1), "refined_pts", 0, 6);
+    visualization_->drawLines(
+        ed_ptr->refined_points_, ed_ptr->refined_views_, 0.05, Vector4d(0.5, 0, 1, 1),
+        "refined_view", 0, 6);
     // visualization_->drawLines(
     //     ed_ptr->refined_tour_, 0.07,
     //     PlanningVisualization::getColor(
@@ -527,14 +530,14 @@ void FastExplorationFSM::clearVisMarker() {
   for (int i = 0; i < 10; ++i) {
     visualization_->drawCubes({}, 0.1, Vector4d(0, 0, 0, 1), "frontier", i, 4);
     // visualization_->drawCubes({}, 0.1, Vector4d(0, 0, 0, 1), "dead_frontier", i, 4);
-    // visualization_->drawBox(Vector3d(0, 0, 0), Vector3d(0, 0, 0), Vector4d(1, 0, 0, 0.3),
-    // "frontier_boxes", i, 4);
+    visualization_->drawBox(Vector3d(0, 0, 0), Vector3d(0, 0, 0), Vector4d(1, 0, 0, 0.3),
+    "frontier_boxes", i, 4);
   }
-  // visualization_->drawSpheres({}, 0.2, Vector4d(0, 0.5, 0, 1), "points", 0, 6);
+  visualization_->drawSpheres({}, 0.2, Vector4d(0, 0.5, 0, 1), "points", 0, 6);
   visualization_->drawLines({}, 0.07, Vector4d(0, 0.5, 0, 1), "frontier_tour", 0, 6);
   visualization_->drawLines({}, 0.07, Vector4d(0, 0.5, 0, 1), "grid_tour", 0, 6);
-  // visualization_->drawSpheres({}, 0.2, Vector4d(0, 0, 1, 1), "refined_pts", 0, 6);
-  // visualization_->drawLines({}, {}, 0.05, Vector4d(0.5, 0, 1, 1), "refined_view", 0, 6);
+  visualization_->drawSpheres({}, 0.2, Vector4d(0, 0, 1, 1), "refined_pts", 0, 6);
+  visualization_->drawLines({}, {}, 0.05, Vector4d(0.5, 0, 1, 1), "refined_view", 0, 6);
   // visualization_->drawLines({}, 0.07, Vector4d(0, 0, 1, 1), "refined_tour", 0, 6);
   visualization_->drawSpheres({}, 0.1, Vector4d(0, 0, 1, 1), "B-Spline", 0, 0);
 
