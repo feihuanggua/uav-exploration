@@ -35,6 +35,20 @@ void FastExplorationFSM::init(ros::NodeHandle& nh) {
   nh.param("fsm/pair_opt_interval", fp_->pair_opt_interval_, 1.0);
   nh.param("fsm/repeat_send_num", fp_->repeat_send_num_, 10);
 
+  // 新增：读取群体通信开关参数
+  nh.param("fsm/enable_swarm_comm", enable_swarm_comm_, true);
+  // 新增：只同步一次地图参数
+  nh.param("fsm/map_sync_once", map_sync_once_, false);
+  
+  double comm_duration;
+  nh.param("fsm/comm_duration", comm_duration, 5.0);
+  if (map_sync_once_) {
+    map_sync_once_timer_ = nh.createWallTimer(ros::WallDuration(comm_duration), [&](const ros::WallTimerEvent&) {
+      enable_swarm_comm_ = false;
+      ROS_WARN("[FSM] communication is disabled! (WallTimer)");
+    }, true); // one-shot
+  }
+
   /* Initialize main modules */
   expl_manager_.reset(new FastExplorationManager);
   expl_manager_->initialize(nh);
@@ -693,6 +707,7 @@ void FastExplorationFSM::droneStateTimerCallback(const ros::TimerEvent& e) {
 }
 
 void FastExplorationFSM::droneStateMsgCallback(const exploration_manager::DroneStateConstPtr& msg) {
+  if (!enable_swarm_comm_) return;
   // Update other drones' states
   if (msg->drone_id == getId()) return;
 
@@ -881,6 +896,7 @@ void FastExplorationFSM::findUnallocated(const vector<int>& actives, vector<int>
 }
 
 void FastExplorationFSM::optMsgCallback(const exploration_manager::PairOptConstPtr& msg) {
+  //if (!enable_swarm_comm_) return;
   if (msg->from_drone_id == getId() || msg->to_drone_id != getId()) return;
 
   // Check stamp to avoid unordered/repeated msg
@@ -931,6 +947,7 @@ void FastExplorationFSM::optMsgCallback(const exploration_manager::PairOptConstP
 
 void FastExplorationFSM::optResMsgCallback(
     const exploration_manager::PairOptResponseConstPtr& msg) {
+  //if (!enable_swarm_comm_) return;
   if (msg->from_drone_id == getId() || msg->to_drone_id != getId()) return;
 
   // Check stamp to avoid unordered/repeated msg
@@ -960,6 +977,7 @@ void FastExplorationFSM::optResMsgCallback(
 }
 
 void FastExplorationFSM::swarmTrajCallback(const bspline::BsplineConstPtr& msg) {
+  //if (!enable_swarm_comm_) return;
   // Get newest trajs from other drones, for inter-drone collision avoidance
   auto& sdat = planner_manager_->swarm_traj_data_;
 

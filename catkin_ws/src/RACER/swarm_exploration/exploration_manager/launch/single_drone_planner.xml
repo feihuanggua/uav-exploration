@@ -133,6 +133,11 @@
     <param name="fsm/wait_delete_duration" value="0.05" type="double"/>
     <param name="fsm/gain_thresh" value="10" type="int"/>
 
+    <!-- 新增：通信开关参数 -->
+    <param name="fsm/enable_swarm_comm" value="true" type="bool"/>
+    <param name="fsm/map_sync_once" value="true" type="bool"/>
+    <param name="fsm/comm_duration" value="10.0" type="double"/>
+
     <param name="fsm/attempt_interval" value="0.1" type="double"/>
     <param name="fsm/pair_opt_interval" value="0.5" type="double"/>
 

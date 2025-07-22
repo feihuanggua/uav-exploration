@@ -92,6 +92,13 @@ private:
       hgrid_pub_;
   ros::Subscriber drone_state_sub_, opt_sub_, opt_res_sub_, swarm_traj_sub_;
   ros::Timer drone_state_timer_, opt_timer_, swarm_traj_timer_;
+
+  // 新增：用于控制群体通信开关
+  bool enable_swarm_comm_;
+
+    // 只同步一次地图
+  bool map_sync_once_ = false;
+  ros::WallTimer map_sync_once_timer_;
 };
 
 }  // namespace fast_planner
