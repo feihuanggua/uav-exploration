@@ -13,6 +13,7 @@
 #include <plan_env/multi_map_manager.h>
 #include <active_perception/perception_utils.h>
 #include <active_perception/hgrid.h>
+#include <std_msgs/Bool.h>
 // #include <active_perception/uniform_grid.h>
 // #include <lkh_tsp_solver/lkh_interface.h>
 // #include <lkh_mtsp_solver/lkh3_interface.h>
@@ -35,9 +36,11 @@ void FastExplorationFSM::init(ros::NodeHandle& nh) {
   nh.param("fsm/pair_opt_interval", fp_->pair_opt_interval_, 1.0);
   nh.param("fsm/repeat_send_num", fp_->repeat_send_num_, 10);
 
-  // 新增：读取群体通信开关参数
+  // 读取群体通信开关参数
   nh.param("fsm/enable_swarm_comm", enable_swarm_comm_, true);
-  // 新增：只同步一次地图参数
+  swarm_comm_sub_ = nh.subscribe("/swarm_expl/enable_comm", 10, &FastExplorationFSM::swarmCommCallback, this);
+
+  // 只同步一次地图参数
   nh.param("fsm/map_sync_once", map_sync_once_, false);
   
   double comm_duration;
@@ -1059,6 +1062,20 @@ void FastExplorationFSM::swarmTrajTimerCallback(const ros::TimerEvent& e) {
     bspline.drone_id = expl_manager_->ep_->drone_id_;
     swarm_traj_pub_.publish(bspline);
   }
+}
+
+/*
+ * Callback for swarm communication control
+ * Usage examples:
+ *   Enable communication: 
+ *     rostopic pub /swarm_expl/enable_comm std_msgs/Bool "data: true"
+ *   Disable communication:
+ *     rostopic pub /swarm_expl/enable_comm std_msgs/Bool "data: false"
+ */
+void FastExplorationFSM::swarmCommCallback(const std_msgs::Bool::ConstPtr& msg) {
+  enable_swarm_comm_ = msg->data;
+  ROS_INFO_STREAM("[FSM] Swarm communication " << (enable_swarm_comm_ ? "enabled" : "disabled") 
+                  << " by external command");
 }
 
 }  // namespace fast_planner

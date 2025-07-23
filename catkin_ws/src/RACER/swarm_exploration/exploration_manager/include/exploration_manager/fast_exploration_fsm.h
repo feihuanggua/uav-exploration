@@ -6,6 +6,7 @@
 #include <ros/ros.h>
 #include <nav_msgs/Path.h>
 #include <std_msgs/Empty.h>
+#include <std_msgs/Bool.h>
 #include <nav_msgs/Odometry.h>
 #include <visualization_msgs/Marker.h>
 #include <exploration_manager/DroneState.h>
@@ -95,6 +96,8 @@ private:
 
   // 新增：用于控制群体通信开关
   bool enable_swarm_comm_;
+  ros::Subscriber swarm_comm_sub_;
+  void swarmCommCallback(const std_msgs::Bool::ConstPtr& msg);
 
     // 只同步一次地图
   bool map_sync_once_ = false;
