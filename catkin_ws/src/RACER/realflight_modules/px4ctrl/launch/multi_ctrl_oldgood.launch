@@ -12,8 +12,8 @@
     </include>
 
     <!-- Include third drone with drone_id 2 -->
-    <include file="$(find px4ctrl)/launch/singl_run.launch">
+    <!-- <include file="$(find px4ctrl)/launch/singl_run.launch">
         <arg name="drone_id" value="2"/>
         <arg name="namespace" value="iris_2"/>
-    </include>
+    </include> -->
 </launch>

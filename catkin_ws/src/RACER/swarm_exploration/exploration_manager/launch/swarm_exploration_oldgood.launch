@@ -1,9 +1,9 @@
 <launch>
   <!-- size of map, change the size in x, y, z according to your application -->
   <!-- 以下三个参数，似乎只决定飞机探索的边界，也就是飞机自身初始化的那块地方，改大了在案例里面不会往更大的地方去，可能是因为案例的地图是有边界的，改小会导致只探索地图一小段区域 -->
-  <arg name="map_size_x" value="20.0"/>
-  <arg name="map_size_y" value="25.0"/>
-  <arg name="map_size_z" value=" 4"/>
+  <arg name="map_size_x" value="18.0"/>
+  <arg name="map_size_y" value="35.0"/>
+  <arg name="map_size_z" value=" 3.5"/>
 
   <!-- Global odom prefix -->
   <!-- 全局 odom 前缀 暂时不知道什么意思 把一个话题给它了，应该是里程计的-->
@@ -13,7 +13,7 @@
   <arg name="odom_prefix" value="/mavros/vision_odom/odom" />
 
   <!-- 这里应该设置的比实际无人机数大一个，如果等于它，最后一个无人机会被认为是地面节点，不参与地图共享 -->
-  <arg name="drone_num" value="4" />
+  <arg name="drone_num" value="3" />
 
     <!-- Map generation -->
     <!-- 选地图-->
@@ -41,20 +41,6 @@
   <include file="$(find exploration_manager)/launch/single_drone_exploration_beta.xml">
     <arg name="drone_id" value="2"/>
     <arg name="drone_name" value="/iris_1"/>
-    <arg name="init_x"   value="1"/>
-    <arg name="init_y"   value="-2"/>
-    <arg name="init_z"   value="0"/> 
-    <arg name="map_size_x" value="$(arg map_size_x)"/>
-    <arg name="map_size_y" value="$(arg map_size_y)"/>
-    <arg name="map_size_z" value="$(arg map_size_z)"/>
-    <arg name="odom_prefix" value="$(arg odom_prefix)"/>
-    <arg name="drone_num" value="$(arg drone_num)"/>
-    <arg name="simulation" default="false"/>
-  </include>
-
-    <include file="$(find exploration_manager)/launch/single_drone_exploration_beta.xml">
-    <arg name="drone_id" value="3"/>
-    <arg name="drone_name" value="/iris_2"/>
     <arg name="init_x"   value="1"/>
     <arg name="init_y"   value="-2"/>
     <arg name="init_z"   value="0"/> 

@@ -63,7 +63,7 @@
     <remap from="/sdf_map/basecoor" to="/swarm_drones/swarm_drone_basecoor" unless="$(arg simulation)"/>
     
 <!-- resolution是建图精度，初始0.1 -->
-    <param name="sdf_map/resolution"      value="0.1" /> 
+    <param name="sdf_map/resolution"      value="0.075" /> 
     <param name="sdf_map/map_size_x"   value="$(arg map_size_x)" /> 
     <param name="sdf_map/map_size_y"   value="$(arg map_size_y)" /> 
     <param name="sdf_map/map_size_z"   value="$(arg map_size_z)" /> 
@@ -100,8 +100,7 @@
     <param name="sdf_map/box_min_z" value="0" type="double"/> 
     <param name="sdf_map/box_max_x" value="$(eval arg('map_size_x') * (0.5))" type="double"/>
     <param name="sdf_map/box_max_y" value="$(eval arg('map_size_x') * (0.5))" type="double"/>
-    <!-- 改了,原先这里是1.7 -->
-    <param name="sdf_map/box_max_z" value="2" type="double"/>
+    <param name="sdf_map/box_max_z" value="1.7" type="double"/>
     
     <param name="sdf_map/no_drone_1" value="false" type="bool"/>
 
@@ -134,7 +133,7 @@
     <param name="fsm/wait_delete_duration" value="0.05" type="double"/>
     <param name="fsm/gain_thresh" value="10" type="int"/>
 
-        <!-- 新增：通信开关参数 -->
+    <!-- 新增：通信开关参数 -->
     <param name="fsm/enable_swarm_comm" value="true" type="bool"/>
     <param name="fsm/map_sync_once" value="true" type="bool"/>
     <param name="fsm/comm_duration" value="10.0" type="double"/>
@@ -181,12 +180,9 @@
     <!-- cluster_min 最小聚类数,找出前沿点簇,过滤噪声点 原先是100 -->
     <!-- cluster_size_xy 可能三在水平方向上合并邻近前沿点 2m是阈值之类的 原先是2 -->
     <!-- cluster_size_z	 高度方向上合并前沿点,这个阈值比水平的更宽松 -->
-    <!-- 室内，地下室和走廊场景cluster_min我用的10，室外我改回100了 -->
     <param name="frontier/cluster_min" value="100" type="int"/>
-    <!-- 改了, cluster_size_xy以前是2，室内用的1-->
     <param name="frontier/cluster_size_xy" value="2" type="double"/>
-    <!-- 改了,cluster_size_z以前是10 室内用的0.1-->
-    <param name="frontier/cluster_size_z" value="1" type="double"/>
+    <param name="frontier/cluster_size_z" value="10.0" type="double"/>
     <!-- min_candidate_dist 最小候选点距离(不知道是哪个距离,可能是与机器人的) 之前是0.5 开阔需要大，复杂需要小-->
     <!-- min_candidate_clearance 最小候选点安全距离  -->
     <!-- candidate_dphi 角度采样布长(猜测) 15变10了-->
@@ -205,9 +201,9 @@
     体素大小 = 地图分辨率 × down_sample_
     例如：地图分辨率0.1m，down_sample_=3，则体素大小为0.3m
      -->
-    <!-- min_visib_num 最小可见点数 (猜测是候选点必须可见的前沿点数量阈值（确保足够探索价值）)以前是30 ，室内用的5，室外改回30了-->
+    <!-- min_visib_num 最小可见点数 (猜测是候选点必须可见的前沿点数量阈值（确保足够探索价值）)以前是30 -->
     <param name="frontier/down_sample" value="3" type="int"/>;
-    <param name="frontier/min_visib_num" value="30" type="int"/>;
+    <param name="frontier/min_visib_num" value="20" type="int"/>;
     <!-- 不好说这是什么 最小视角比例 也是控制前沿质量的参数 原先是0.2-->
     <param name="frontier/min_view_finish_fraction" value="0.2" type="double"/>;
 
@@ -248,8 +244,7 @@
     <param name="manager/min_time" value="true" type="bool"/>
     <param name="manager/relax_time1" value="0.3" type="double"/>
     <param name="manager/relax_time2" value="1.5" type="double"/>
-    <!-- max_yawdot 原先120，改成60了 -->
-    <param name="manager/max_yawdot" value="$(eval 60 * 3.1415926 / 180.0)" type="double"/>
+    <param name="manager/max_yawdot" value="$(eval 80 * 3.1415926 / 180.0)" type="double"/>
 
   <!-- kinodynamic path searching 路径搜索-->
     <param name="search/max_tau" value="0.8" type="double"/>
